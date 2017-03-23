@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
-    private static final String endpoint = "http://api.androidhive.info/json/glide.json";
+    private static final String endpoint = "http://image.tmdb.org/t/p/";
     private ArrayList<String> images;
     private ProgressDialog pDialog;
     private MovieAdapter mAdapter;
@@ -42,18 +42,22 @@ public class MainActivity extends AppCompatActivity {
 //        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 //        mAdapter = new MovieAdapter(getApplicationContext(), urlFromJson);
 //        Log.i(TAG ,mAdapter.toString());
+
+        fetchImages();
         images = new ArrayList<>();
         mAdapter = new MovieAdapter(getApplicationContext(), images);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
+
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+        recyclerView.setHasFixedSize(true);
 
         Log.i(TAG, "Inside");
-        fetchImages();
+
 
 
     }
@@ -66,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 //        pDialog.setMessage("Downloading json...");
 //        pDialog.show();
 
-        String url = FORECAST_BASE_URL + GET_POPULAR + "?api_key="+BuildConfig.TMDB_KEY;
+        final String url = FORECAST_BASE_URL + GET_POPULAR + "?api_key="+BuildConfig.TMDB_KEY;
 
 
         JsonObjectRequest req =  new JsonObjectRequest(Request.Method.GET,
@@ -83,8 +87,9 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject c = contacts.getJSONObject(j);
                             String path = c.getString("poster_path");
                             Log.i(TAG, path);
-                            images.add(path);
+                            images.add(endpoint+"w185/"+path);
                         }
+
                     } catch (JSONException e) {
                         Log.e(TAG, "Json parsing error: " + e.getMessage());
                     }

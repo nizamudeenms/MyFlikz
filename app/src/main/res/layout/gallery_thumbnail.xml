@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<info.androidhive.glide.helper.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <ImageView
         android:id="@+id/thumbnail"
@@ -10,4 +9,4 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop" />
-</info.androidhive.glide.helper.SquareLayout>
+</GridLayout>

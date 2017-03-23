@@ -18,9 +18,10 @@ import java.util.List;
  */
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
-
+    String TAG = MovieAdapter.class.getSimpleName();
     private List<String> images;
     private Context mContext;
+    private static final int LENGTH = 18;
 
     public MovieAdapter(Context context, List<String> images) {
         mContext = context;
@@ -30,25 +31,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        Context context = parent.getContext();
+        mContext = parent.getContext();
         int layoutIdForListItem = R.layout.gallery_thumbnail;
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         boolean shouldAttachToParentImmediately = false;
 
-        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
-        MyViewHolder viewHolder = new MyViewHolder(view);
+//        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
+//        MyViewHolder viewHolder = new MyViewHolder(view);
 
 
-//        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_thumbnail,parent,false);
-        return viewHolder;
+        View itemView = LayoutInflater.from(mContext).inflate(R.layout.gallery_thumbnail,parent,false);
+    return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         String image = images.get(position);
 
-        Log.i("Nizam",image);
-        Glide.with(mContext).load(image)
+        Log.i(TAG,image);
+
+        Glide.with(mContext).load("\"" +image+ "\" " )
                 .thumbnail(0.5f)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
