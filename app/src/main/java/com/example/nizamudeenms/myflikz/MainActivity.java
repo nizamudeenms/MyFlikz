@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 //        mAdapter = new MovieAdapter(getApplicationContext(), urlFromJson);
 //        Log.i(TAG ,mAdapter.toString());
 
-        fetchImages();
+
         images = new ArrayList<>();
         mAdapter = new MovieAdapter(getApplicationContext(), images);
 
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
-
+        fetchImages();
         Log.i(TAG, "Inside");
 
 

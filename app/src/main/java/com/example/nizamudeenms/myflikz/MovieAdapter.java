@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -47,14 +46,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         String image = images.get(position);
-
+        ImageView im = holder.thumbnail;
         Log.i(TAG,image);
 
-        Glide.with(mContext).load("\"" +image+ "\" " )
-                .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.thumbnail);
+//        Picasso.with(mContext)
+//                .load(image).placeholder(R.mipmap.ic_launcher)
+//                .into(holder.thumbnail);
+
+        Glide.with(mContext).load(image).placeholder(R.mipmap.ic_launcher).crossFade().thumbnail(0.5f).into(im);
     }
 
     @Override
