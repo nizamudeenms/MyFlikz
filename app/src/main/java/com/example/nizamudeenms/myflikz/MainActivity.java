@@ -1,12 +1,17 @@
 package com.example.nizamudeenms.myflikz;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter mAdapter;
     private String urlFromJson = null;
     private RecyclerView recyclerView;
+
+    final String GET_POPULAR = "popular";
+    final String GET_TOP = "top_rated";
+    public String sortBy = GET_POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,44 +68,48 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "Inside");
 
 
-
     }
 
     private void fetchImages() {
         final String FORECAST_BASE_URL = "https://api.themoviedb.org/3/movie/";
-        final String GET_POPULAR = "popular";
-        final String GET_TOP = "top_rated";
+
+        String url = FORECAST_BASE_URL + GET_POPULAR + "?api_key=" + BuildConfig.TMDB_KEY;
 
 //        pDialog.setMessage("Downloading json...");
 //        pDialog.show();
 
-        final String url = FORECAST_BASE_URL + GET_POPULAR + "?api_key="+BuildConfig.TMDB_KEY;
+        if (sortBy.equals(GET_POPULAR)) {
+            url = FORECAST_BASE_URL + GET_POPULAR + "?api_key=" + BuildConfig.TMDB_KEY;
+        } else if (sortBy.equals(GET_TOP)) {
+            url = FORECAST_BASE_URL + GET_TOP + "?api_key=" + BuildConfig.TMDB_KEY;
+        } else {
+            url = FORECAST_BASE_URL + GET_POPULAR + "?api_key=" + BuildConfig.TMDB_KEY;
+        }
 
-
-        JsonObjectRequest req =  new JsonObjectRequest(Request.Method.GET,
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,
                 url, null,
-                new Response.Listener<JSONObject>(){
+                new Response.Listener<JSONObject>() {
 
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d(TAG, response.toString());
-                images.clear();
-                    try {
-                        JSONArray contacts = response.getJSONArray("results");
-                        for (int j = 0; j < contacts.length(); j++) {
-                            JSONObject c = contacts.getJSONObject(j);
-                            String path = c.getString("poster_path");
-                            Log.i(TAG, path);
-                            images.add(endpoint+"w185/"+path);
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, response.toString());
+                        images.clear();
+                        try {
+                            JSONArray contacts = response.getJSONArray("results");
+                            for (int j = 0; j < contacts.length(); j++) {
+                                JSONObject c = contacts.getJSONObject(j);
+                                String path = c.getString("poster_path");
+                                Log.i(TAG, path);
+                                images.add(endpoint + "w185/" + path);
+                            }
+
+                        } catch (JSONException e) {
+                            Log.e(TAG, "Json parsing error: " + e.getMessage());
                         }
 
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Json parsing error: " + e.getMessage());
+                        mAdapter.notifyDataSetChanged();
                     }
-
-                mAdapter.notifyDataSetChanged();
-            }
-        }, new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -123,4 +136,34 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int menuSelected = item.getItemId();
+
+        if (menuSelected == R.id.popular) {
+            sortBy = GET_POPULAR;
+            fetchImages();
+            Context context = this;
+            Toast toast = Toast.makeText(context, getString(R.string.popular_sel_mes), Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 0);
+            toast.show();
+        } else if (menuSelected == R.id.topRated) {
+            sortBy = GET_TOP;
+            fetchImages();
+            Context context = this;
+            Toast toast = Toast.makeText(context, getString(R.string.top_rated_sel_msg), Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 0);
+            toast.show();
+        }
+        return true;
+    }
+
+
 }
