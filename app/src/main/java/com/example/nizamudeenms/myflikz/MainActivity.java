@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private static final String endpoint = "http://image.tmdb.org/t/p/";
-    private ArrayList<String> images;
+    private ArrayList<Movie> movies;
     private ProgressDialog pDialog;
     private MovieAdapter mAdapter;
     private String urlFromJson = null;
@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
 //        Log.i(TAG ,mAdapter.toString());
 
 
-        images = new ArrayList<>();
-        mAdapter = new MovieAdapter(getApplicationContext(), images);
+        movies = new ArrayList<>();
+        mAdapter = new MovieAdapter(getApplicationContext(), movies);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
+
         fetchImages();
         Log.i(TAG, "Inside");
 
@@ -93,14 +94,27 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, response.toString());
-                        images.clear();
+                        movies.clear();
                         try {
-                            JSONArray contacts = response.getJSONArray("results");
-                            for (int j = 0; j < contacts.length(); j++) {
-                                JSONObject c = contacts.getJSONObject(j);
-                                String path = c.getString("poster_path");
-                                Log.i(TAG, path);
-                                images.add(endpoint + "w185/" + path);
+                            JSONArray responseBundle = response.getJSONArray("results");
+                            for (int j = 0; j < responseBundle.length(); j++) {
+                                JSONObject c = responseBundle.getJSONObject(j);
+                                String posterPath = c.getString("poster_path");
+                                String backdropPath = c.getString("backdrop_path");
+//                                Log.i(TAG, posterPath);
+                                Log.i(TAG,c.getString("original_title"));
+                                Log.i(TAG,c.getString("vote_average"));
+                                Log.i(TAG,c.getString("release_date"));
+
+                                Movie movie = new Movie();
+                                movie.setPOSTER_PATH(endpoint + "w185/" + posterPath);
+                                movie.setBACKDROP_PATH(endpoint + "w500/"+backdropPath);
+                                movie.setID(c.getString("id"));
+                                movie.setOVERVIEW(c.getString("overview"));
+                                movie.setRELEASE_DATE(c.getString("release_date"));
+                                movie.setTITLE(c.getString("original_title"));
+                                movie.setVOTE_AVERAGE(c.getString("vote_average"));
+                                movies.add(movie);
                             }
 
                         } catch (JSONException e) {
@@ -127,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 //                JSONObject pics = weatherArray.getJSONObject(i);
 //                pic = pics.getString("poster_path");
 //                Log.i(TAG,pic);
-//                images.add(pic);
+//                movies.add(pic);
 //
 //            }
 //
@@ -166,4 +180,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+//    @Override
+//    public void onClick(String weatherForDay) {
+//        Context context = this;
+//        Intent intent = new Intent(this,DetailActivity.class);
+//        Toast.makeText(context, " Activity Launched", Toast.LENGTH_SHORT).show();
+//        startActivity(intent);
+//    }
 }
