@@ -36,11 +36,13 @@ public class DetailActivity extends AppCompatActivity {
 
         Log.i("Nizam",getIntent().getStringExtra("title"));
         String title = getIntent().getStringExtra("title");
+        String releaseDate = "Release Date : " +  getIntent().getStringExtra("release_date");
+        String rating = "Rating : " + getIntent().getStringExtra("vote_average");
 
         movieNameTextView.setText(title);
         overviewTextView.setText(getIntent().getStringExtra("overview"));
-        releaseDateTextView.setText(getIntent().getStringExtra("release_date"));
-        ratingTextView.setText(getIntent().getStringExtra("vote_average"));
+        releaseDateTextView.setText(releaseDate);
+        ratingTextView.setText(rating);
     }
 
 }
