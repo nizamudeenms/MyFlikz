@@ -35,7 +35,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:elevation="20dp"
                     android:padding="5dp"
                     android:scaleType="fitXY"
                     android:src="@mipmap/ic_launcher_round" />
@@ -61,7 +60,6 @@
                     android:shadowDx="-2"
                     android:shadowDy="-2"
                     android:shadowRadius="1"
-                    android:text="Name"
                     android:textColor="@color/text_shadow"
                     android:textSize="25dp"
                     android:textStyle="bold" />
@@ -76,7 +74,6 @@
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="2"
-                    android:text="Overview"
                     android:textColor="@color/light_font" />
 
                 <TextView
@@ -90,7 +87,6 @@
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="2"
-                    android:text="Some sample text to be diosplayed as the overview "
                     android:textColor="@color/light_font" />
 
                 <TextView
@@ -104,10 +100,23 @@
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="2"
-                    android:text="Rating"
                     android:textColor="@color/light_font" />
 
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <fragment
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/youtube_playerviewfragment"
+                    android:layout_below="@+id/youtube_playerview"
+                    android:name="com.google.android.youtube.player.YouTubePlayerFragment"/>
+                </ScrollView>
+
+
             </LinearLayout>
+
 
 
         </RelativeLayout>
