@@ -4,34 +4,30 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerFragment;
-import com.google.android.youtube.player.YouTubePlayerView;
 
 /**
  * Created by nizamudeenms on 26/03/17.
  */
 
-public class DetailActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener{
+public class DetailActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        YouTubePlayerFragment youTubePlayerFragment;
 
         ImageView posterImageView;
         ImageView backDropImageView;
         TextView movieNameTextView;
         TextView overviewTextView, ratingTextView,releaseDateTextView;
 
-        youTubePlayerFragment = (YouTubePlayerFragment)getFragmentManager().findFragmentById(R.id.youtube_playerviewfragment);
-        youTubePlayerFragment.initialize(VideoPlayerConfig.API_KEY,this);
+
         posterImageView = (ImageView) findViewById(R.id.poster);
         backDropImageView = (ImageView) findViewById(R.id.back_drop);
         movieNameTextView = (TextView) findViewById(R.id.movie_name);
@@ -51,34 +47,19 @@ public class DetailActivity extends AppCompatActivity implements YouTubePlayer.O
         overviewTextView.setText(getIntent().getStringExtra("overview"));
         releaseDateTextView.setText(releaseDate);
         ratingTextView.setText(rating);
+
+        LinearLayout video_layout = (LinearLayout )findViewById(R.id.videos_layout);
+        video_layout.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent videos_intent = new Intent(DetailActivity.this ,VideoActivity.class);
+                videos_intent.putExtra("id",getIntent().getStringExtra("id"));
+                startActivity(videos_intent);
+            }
+        });
     }
 
-    @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-        if (!b) {
-            youTubePlayer.cueVideo(VideoPlayerConfig.VIDEO_ID);
-            youTubePlayer.cueVideo("s4C1gnqdrew");
-        }
-    }
 
-    @Override
-    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-        if (youTubeInitializationResult.isUserRecoverableError()) {
-            youTubeInitializationResult.getErrorDialog(this, 1).show();
-        } else {
-            String errorMessage = String.format("Eror in youtube api",youTubeInitializationResult.toString());
-            Toast.makeText(this,errorMessage,Toast.LENGTH_LONG).show();
-        }
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            getYoutubePlayerProvider().initialize(VideoPlayerConfig.API_KEY,this);
-        }
-    }
-
-    protected YouTubePlayer.Provider getYoutubePlayerProvider(){
-        return (YouTubePlayerView) findViewById(R.id.youtube_playerviewfragment);
-    }
 }

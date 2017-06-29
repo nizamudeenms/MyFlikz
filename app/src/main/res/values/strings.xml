@@ -5,6 +5,8 @@
     <string name="popular_sel_mes">Sorted by Most Popular Movies</string>
     <string name="top_rated_sel_msg">Sorted by Highest rated Movies</string>
     <string name="title_activity_detail">Movie Details</string>
+    <string name="title_activity_video">Videos and Clips</string>
     <string name="action_settings">Settings</string>
+    <string name="video_label">Trailers and Clips</string>
 
 </resources>

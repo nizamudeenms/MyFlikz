@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            Log.d(TAG, response.toString());
+//                            Log.d(TAG, response.toString());
                             movies.clear();
                             try {
                                 JSONArray responseBundle = response.getJSONArray("results");

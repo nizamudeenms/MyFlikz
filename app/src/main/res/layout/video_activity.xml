@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.nizamudeenms.myflikz.VideoActivity">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+     <android.support.v7.widget.RecyclerView
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:id="@+id/recycler_view_video">
+
+     </android.support.v7.widget.RecyclerView>
+
+        <!--fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/youtube_playerviewfragment"
+            android:layout_below="@+id/youtube_playerview"
+            android:name="com.google.android.youtube.player.YouTubePlayerFragment"/>-->
+    </ScrollView>
+
+
+</LinearLayout>
