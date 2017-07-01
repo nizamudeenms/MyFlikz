@@ -33,14 +33,14 @@ public class VideoActivity extends AppCompatActivity {
     RecyclerView recyclerviewVideo;
     Vector<Video> youtubeVideos = new Vector<Video>();
     String MOVIE_ID = "";
+    VideoAdapter mVideoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_activity);
 
-        VideoFetchTask videoFetchTask = new VideoFetchTask();
-        videoFetchTask.execute();
+
         Log.i("youtubeVideos", String.valueOf(youtubeVideos.size()));
         MOVIE_ID = getIntent().getStringExtra("id");
         System.out.println("MOvie"+MOVIE_ID);
@@ -51,16 +51,19 @@ public class VideoActivity extends AppCompatActivity {
         recyclerviewVideo.setLayoutManager(new LinearLayoutManager(this));
 
 
-        VideoAdapter videoAdapter = new VideoAdapter(youtubeVideos);
+        mVideoAdapter  = new VideoAdapter(youtubeVideos);
         System.out.println("after video adapter ");
-        recyclerviewVideo.setAdapter(videoAdapter);
+        recyclerviewVideo.setAdapter(mVideoAdapter);
         System.out.println("after adapter ");
+
+        VideoFetchTask videoFetchTask = new VideoFetchTask();
+        videoFetchTask.execute();
     }
 
 
     public class VideoFetchTask extends AsyncTask<Void, Void, Void> {
 
-        VideoAdapter mVideoAdapter = new VideoAdapter(getApplicationContext(), youtubeVideos);;
+//        VideoAdapter mVideoAdapter = new VideoAdapter(getApplicationContext(), youtubeVideos);;
         Context mContext;
         ArrayList<Video> videosList = new ArrayList<Video>() {};
         String FINAL_URL = "";
