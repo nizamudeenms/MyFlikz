@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.nizamudeenms.myflikz.VideoActivity">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_video"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <ProgressBar
+        android:id="@+id/pb_loading_indicator"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        />
+
+
+
+    <!--fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/youtube_playerviewfragment"
+        android:layout_below="@+id/youtube_playerview"
+        android:name="com.google.android.youtube.player.YouTubePlayerFragment"/>-->
+
+
+</FrameLayout>

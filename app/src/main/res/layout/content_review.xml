@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/review_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/folderStyle"
+        android:id="@+id/reviewer_name_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reviewer_name"
+        android:padding="5dp"
+        android:layout_margin="2dp"/>
+
+    <TextView
+        style="@style/ActivityLabelStyle"
+        android:fontFamily="sans-serif"
+        android:id="@+id/review_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Review Content"
+        android:padding="5dp"
+        android:layout_margin="2dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+</LinearLayout>

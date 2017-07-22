@@ -1,13 +1,17 @@
 package com.example.nizamudeenms.myflikz;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -16,6 +20,9 @@ import com.bumptech.glide.Glide;
  */
 
 public class DetailActivity extends AppCompatActivity {
+    private SQLiteDatabase mMovieDb;
+    Cursor favoriteMovies;
+    String isFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +33,7 @@ public class DetailActivity extends AppCompatActivity {
         ImageView backDropImageView;
         TextView movieNameTextView;
         TextView overviewTextView, ratingTextView,releaseDateTextView;
+        FloatingActionButton favoriteFAB;
 
 
         posterImageView = (ImageView) findViewById(R.id.poster);
@@ -34,11 +42,33 @@ public class DetailActivity extends AppCompatActivity {
         overviewTextView = (TextView) findViewById(R.id.overview);
         ratingTextView = (TextView) findViewById(R.id.rating);
         releaseDateTextView = (TextView) findViewById(R.id.release_date);
+        favoriteFAB = (FloatingActionButton) findViewById(R.id.favorite_fab);
+
+        favoriteMovies = getFavoriteMovies();
+        System.out.println("favoriteMovies"+favoriteMovies);
+        isFavorite =  favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE));
+        System.out.println("isFavorite  "+isFavorite);
+
+//        if (isFavorite.equals("Y")) {
+//            favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
+//        }else{
+//            favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
+//
+//        }
+
+
+        favoriteFAB.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(getApplicationContext(), "favorites clicked", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 0);
+                toast.show();
+            }
+        });
 
         Glide.with(getApplicationContext()).load(getIntent().getStringExtra("poster_url")).placeholder(R.mipmap.ic_launcher).crossFade().thumbnail(0.5f).into(posterImageView);
         Glide.with(getApplicationContext()).load(getIntent().getStringExtra("backdrop_url")).placeholder(R.mipmap.ic_launcher).crossFade().thumbnail(0.5f).into(backDropImageView);
 
-        Log.i("Nizam",getIntent().getStringExtra("title"));
+//        Log.i("Nizam",getIntent().getStringExtra("title"));
         String title = getIntent().getStringExtra("title");
         String releaseDate = "Release Date : " +  getIntent().getStringExtra("release_date");
         String rating = "Rating : " + getIntent().getStringExtra("vote_average");
@@ -58,8 +88,30 @@ public class DetailActivity extends AppCompatActivity {
                 startActivity(videos_intent);
             }
         });
+
+        LinearLayout review_layout = (LinearLayout )findViewById(R.id.review_layout_detail);
+        review_layout.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent review_intent = new Intent(DetailActivity.this ,ReviewActivity.class);
+                review_intent.putExtra("id",getIntent().getStringExtra("id"));
+                startActivity(review_intent);
+            }
+        });
     }
 
+    private void checkFavorite() {
+        MovieDbHelper movieDbHelper = new MovieDbHelper(this);
+        mMovieDb = movieDbHelper.getReadableDatabase();
+        Cursor cFavoriteMovies = getFavoriteMovies();
+    }
+
+    private Cursor getFavoriteMovies() {
+        return mMovieDb.rawQuery("SELECT  * FROM POPULAR_MOVIES_TABLE POP WHERE  POP.FAVORITE = 'Y' " +
+                "UNION ALL " +
+                "SELECT  * FROM TOP_MOVIES_TABLE TOP WHERE  TOP.FAVORITE = 'Y' ", null);
+    }
 
 
 }

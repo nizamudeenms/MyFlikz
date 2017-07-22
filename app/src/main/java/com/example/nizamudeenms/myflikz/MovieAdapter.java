@@ -2,6 +2,7 @@ package com.example.nizamudeenms.myflikz;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,19 +11,17 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.List;
-
 /**
  * Created by nizamudeenms on 17/03/17.
  */
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
     String TAG = MovieAdapter.class.getSimpleName();
-    private List<Movie> movies;
+    Cursor movies;
     private Context mContext;
     private static final int LENGTH = 18;
 
-    public MovieAdapter(Context context, List<Movie> movies) {
+    public MovieAdapter(Context context, Cursor movies) {
         mContext = context;
         this.movies = movies;
     }
@@ -45,28 +44,30 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Movie movie = movies.get(position);
+        movies.moveToPosition(position);
         ImageView im = holder.thumbnail;
 //        Log.i(TAG,image.toString());
 
 //        Picasso.with(mContext)
 //                .load(image).placeholder(R.mipmap.ic_launcher)
 //                .into(holder.thumbnail);
-
-        Glide.with(mContext).load(movie.getPOSTER_PATH()).placeholder(R.mipmap.ic_launcher).crossFade().thumbnail(0.5f).into(im);
+        if (!movies.moveToPosition(position))
+            return;
+        Glide.with(mContext).load(movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_URL))).placeholder(R.mipmap.ic_launcher).crossFade().thumbnail(0.5f).into(im);
     }
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        if (null == movies) return 0;
+        return movies.getCount();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView thumbnail;
-        List<Movie> movies ;
+        Cursor movies ;
         Context context;
 
-        public MyViewHolder(View view, Context mContext, List<Movie> movies) {
+        public MyViewHolder(View view, Context mContext, Cursor movies) {
             super(view);
             this.movies = movies;
             this.context = mContext;
@@ -77,17 +78,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            Movie currentMovie = this.movies.get(position);
+//            Movie currentMovie = this.movies.getCount(position);
+            movies.moveToPosition(position);
+
+
 
             Intent intent = new Intent(this.context,DetailActivity.class);
-            intent.putExtra("poster_url",currentMovie.getPOSTER_PATH());
-            intent.putExtra("backdrop_url",currentMovie.getBACKDROP_PATH());
-            intent.putExtra("id",currentMovie.getID());
-            intent.putExtra("overview",currentMovie.getOVERVIEW());
-            intent.putExtra("release_date",currentMovie.getRELEASE_DATE());
-            intent.putExtra("results",currentMovie.getRESULTS());
-            intent.putExtra("title",currentMovie.getTITLE());
-            intent.putExtra("vote_average",currentMovie.getVOTE_AVERAGE());
+            intent.putExtra("poster_url",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_URL)));
+            intent.putExtra("backdrop_url",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_URL)));
+            intent.putExtra("id",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)));
+            intent.putExtra("overview",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW)));
+            intent.putExtra("release_date",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE)));
+            intent.putExtra("title",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)));
+            intent.putExtra("vote_average",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE)));
             this.context.startActivity(intent);
 
 //            v.getContext().startActivity(new Intent(v.getContext(), DetailActivity.class));

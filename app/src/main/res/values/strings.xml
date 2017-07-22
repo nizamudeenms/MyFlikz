@@ -8,5 +8,8 @@
     <string name="title_activity_video">Videos and Clips</string>
     <string name="action_settings">Settings</string>
     <string name="video_label">Trailers and Clips</string>
-
+    <string name="review_label">Reviews</string>
+    <string name="reviewer_name">Reviewer Name</string>
+    <string name="review_content">Movie Review</string>
+    <string name="empty_text">No data available</string>
 </resources>

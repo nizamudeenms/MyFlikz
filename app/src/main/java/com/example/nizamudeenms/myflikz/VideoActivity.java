@@ -4,9 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -34,12 +37,12 @@ public class VideoActivity extends AppCompatActivity {
     Vector<Video> youtubeVideos = new Vector<Video>();
     String MOVIE_ID = "";
     VideoAdapter mVideoAdapter;
+    private ProgressBar mLoadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.video_activity);
-
+        setContentView(R.layout.activity_video);
 
         Log.i("youtubeVideos", String.valueOf(youtubeVideos.size()));
         MOVIE_ID = getIntent().getStringExtra("id");
@@ -48,6 +51,7 @@ public class VideoActivity extends AppCompatActivity {
 
         recyclerviewVideo = (RecyclerView) findViewById(R.id.recycler_view_video);
         recyclerviewVideo.setHasFixedSize(true);
+        recyclerviewVideo.setItemAnimator(new DefaultItemAnimator());
         recyclerviewVideo.setLayoutManager(new LinearLayoutManager(this));
 
 
@@ -56,6 +60,7 @@ public class VideoActivity extends AppCompatActivity {
         recyclerviewVideo.setAdapter(mVideoAdapter);
         System.out.println("after adapter ");
 
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         VideoFetchTask videoFetchTask = new VideoFetchTask();
         videoFetchTask.execute();
     }
@@ -68,17 +73,24 @@ public class VideoActivity extends AppCompatActivity {
         ArrayList<Video> videosList = new ArrayList<Video>() {};
         String FINAL_URL = "";
 
+        @Override
+        protected void onPreExecute() {
+//            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
+
+
 
         @Override
         protected Void doInBackground(Void... params) {
-            final String FORECAST_BASE_URL = "https://api.themoviedb.org/3/movie/";
+            final String VIDEO_BASE_URL = "https://api.themoviedb.org/3/movie/";
             final String FIRST_VIDEO_URL = "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/";
             final String SECOND_VIDEO_URL = "\" frameborder=\"0\" allowfullscreen></iframe>";
 
             Log.i("VideoFetchtask","Inside Video Fetch Task **************");
 
 
-            String url = FORECAST_BASE_URL + MOVIE_ID + "/videos?api_key=" + BuildConfig.TMDB_KEY;
+            String url = VIDEO_BASE_URL + MOVIE_ID + "/videos?api_key=" + BuildConfig.TMDB_KEY;
 
             Log.i("Url ", url);
 
@@ -142,6 +154,11 @@ public class VideoActivity extends AppCompatActivity {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+        }
     }
 
 

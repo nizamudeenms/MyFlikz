@@ -1,7 +1,10 @@
 package com.example.nizamudeenms.myflikz;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter mAdapter;
     private String urlFromJson = null;
     private RecyclerView recyclerView;
+    private SQLiteDatabase mMovieDb;
 
     final String GET_POPULAR = "popular";
     final String GET_TOP = "top_rated";
@@ -49,37 +53,58 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        ImageView imageView = (ImageView) findViewById(R.id.thumbnail);
-//
-//        Glide.with(this).load("http://goo.gl/gEgYUd").into(imageView);
-
-
-//        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-//        mAdapter = new MovieAdapter(getApplicationContext(), urlFromJson);
-//        Log.i(TAG ,mAdapter.toString());
-
-
         movies = new ArrayList<>();
-        mAdapter = new MovieAdapter(getApplicationContext(), movies);
-
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
-//        fetchImages();
-        Log.i(TAG, "Inside");
+
+        MovieDbHelper movieDbHelper = new MovieDbHelper(this);
+        mMovieDb = movieDbHelper.getWritableDatabase();
+
+        Cursor cPopularMovies = getPopularMovies();
+        Cursor cTopMovies = getTopMovies();
+
+        mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
+        recyclerView.setAdapter(mAdapter);
+
+
+        Log.i(TAG, "Adapter Set");
         FetchMoviesTask fetchMovies = new FetchMoviesTask();
         fetchMovies.execute();
 
+
+    }
+
+    private Cursor getPopularMovies() {
+        return mMovieDb.query(
+                MovieContract.MovieEntry.POPULAR_MOVIE_TABLE,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    private Cursor getTopMovies() {
+        return mMovieDb.query(
+                MovieContract.MovieEntry.TOP_MOVIE_TABLE,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
     }
 
 
-    public class FetchMoviesTask extends AsyncTask<Void, Void ,Void> {
+    public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -113,19 +138,45 @@ public class MainActivity extends AppCompatActivity {
                                     String posterPath = c.getString("poster_path");
                                     String backdropPath = c.getString("backdrop_path");
 //                                Log.i(TAG, posterPath);
-                                    Log.i(TAG,c.getString("original_title"));
-                                    Log.i(TAG,c.getString("vote_average"));
-                                    Log.i(TAG,c.getString("release_date"));
+                                    Log.i(TAG, c.getString("original_title"));
+                                    Log.i(TAG, c.getString("vote_average"));
+                                    Log.i(TAG, c.getString("release_date"));
 
                                     Movie movie = new Movie();
                                     movie.setPOSTER_PATH(endpoint + "w185/" + posterPath);
-                                    movie.setBACKDROP_PATH(endpoint + "w500/"+backdropPath);
+                                    movie.setBACKDROP_PATH(endpoint + "w500/" + backdropPath);
                                     movie.setID(c.getString("id"));
                                     movie.setOVERVIEW(c.getString("overview"));
                                     movie.setRELEASE_DATE(c.getString("release_date"));
                                     movie.setTITLE(c.getString("original_title"));
                                     movie.setVOTE_AVERAGE(c.getString("vote_average"));
                                     movies.add(movie);
+
+                                    if (sortBy.equals(GET_POPULAR)) {
+                                        ContentValues cv = new ContentValues();
+                                        cv.put(MovieContract.MovieEntry.COLUMN_POSTER_URL, endpoint + "w185/" + posterPath);
+                                        cv.put(MovieContract.MovieEntry.COLUMN_BACKDROP_URL, endpoint + "w500/" + backdropPath);
+                                        cv.put(MovieContract.MovieEntry.COLUMN_TITLE, c.getString("original_title"));
+                                        cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, c.getString("id"));
+                                        cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, c.getString("overview"));
+                                        cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, c.getString("release_date"));
+                                        cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, c.getString("vote_average"));
+                                        mMovieDb.insert(MovieContract.MovieEntry.POPULAR_MOVIE_TABLE, null, cv);
+                                        System.out.println("Value inserted in Popular DB ");
+                                    } else {
+                                        ContentValues cv = new ContentValues();
+                                        cv.put(MovieContract.MovieEntry.COLUMN_POSTER_URL, endpoint + "w185/" + posterPath);
+                                        cv.put(MovieContract.MovieEntry.COLUMN_BACKDROP_URL, endpoint + "w500/" + backdropPath);
+                                        cv.put(MovieContract.MovieEntry.COLUMN_TITLE, c.getString("original_title"));
+                                        cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, c.getString("id"));
+                                        cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, c.getString("overview"));
+                                        cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, c.getString("release_date"));
+                                        cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, c.getString("vote_average"));
+                                        mMovieDb.insert(MovieContract.MovieEntry.TOP_MOVIE_TABLE, null, cv);
+                                        System.out.println("Value inserted in Top DB ");
+                                    }
+
+
                                 }
 
                             } catch (JSONException e) {
@@ -159,32 +210,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             MovieController.getInstance().addToRequestQueue(req);
-//        Log.i(TAG, url);
-//        try{
-//            JSONObject jo  = new JSONObject(url);
-//            JSONArray weatherArray = jo.getJSONArray("result");
-//
-//            for(int i = 0; i < weatherArray.length(); i++) {
-//                String pic = null;
-//                JSONObject pics = weatherArray.getJSONObject(i);
-//                pic = pics.getString("poster_path");
-//                Log.i(TAG,pic);
-//                movies.add(pic);
-//
-//            }
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
             return null;
         }
     }
 
-
-//    private void fetchImages() {
-//
-//
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -198,18 +227,18 @@ public class MainActivity extends AppCompatActivity {
 
         if (menuSelected == R.id.popular) {
             sortBy = GET_POPULAR;
-//            fetchImages();
-            FetchMoviesTask fetchMovies = new FetchMoviesTask();
-            fetchMovies.execute();
+            Cursor cPopularMovies = getPopularMovies();
+            mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
+            recyclerView.setAdapter(mAdapter);
             Context context = this;
             Toast toast = Toast.makeText(context, getString(R.string.popular_sel_mes), Toast.LENGTH_LONG);
             toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 0);
             toast.show();
         } else if (menuSelected == R.id.topRated) {
             sortBy = GET_TOP;
-//            fetchImages();
-            FetchMoviesTask fetchMovies = new FetchMoviesTask();
-            fetchMovies.execute();
+            Cursor cTopMovies = getTopMovies();
+            mAdapter = new MovieAdapter(getApplicationContext(), cTopMovies);
+            recyclerView.setAdapter(mAdapter);
             Context context = this;
             Toast toast = Toast.makeText(context, getString(R.string.top_rated_sel_msg), Toast.LENGTH_LONG);
             toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 0);
