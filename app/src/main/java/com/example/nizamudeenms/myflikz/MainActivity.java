@@ -68,8 +68,16 @@ public class MainActivity extends AppCompatActivity {
         Cursor cPopularMovies = getPopularMovies();
         Cursor cTopMovies = getTopMovies();
 
-        mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
-        recyclerView.setAdapter(mAdapter);
+        if (sortBy.equals(GET_POPULAR)) {
+            System.out.println("inside popular movies");
+            mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
+            recyclerView.setAdapter(mAdapter);
+        }else if(sortBy.equals(GET_TOP)){
+            System.out.println("inside top movies");
+            mAdapter = new MovieAdapter(getApplicationContext(), cTopMovies);
+            recyclerView.setAdapter(mAdapter);
+        }
+
 
 
         Log.i(TAG, "Adapter Set");
@@ -227,6 +235,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (menuSelected == R.id.popular) {
             sortBy = GET_POPULAR;
+            FetchMoviesTask fetchMovies = new FetchMoviesTask();
+            fetchMovies.execute();
             Cursor cPopularMovies = getPopularMovies();
             mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
             recyclerView.setAdapter(mAdapter);
@@ -236,6 +246,8 @@ public class MainActivity extends AppCompatActivity {
             toast.show();
         } else if (menuSelected == R.id.topRated) {
             sortBy = GET_TOP;
+            FetchMoviesTask fetchMovies = new FetchMoviesTask();
+            fetchMovies.execute();
             Cursor cTopMovies = getTopMovies();
             mAdapter = new MovieAdapter(getApplicationContext(), cTopMovies);
             recyclerView.setAdapter(mAdapter);

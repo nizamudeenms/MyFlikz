@@ -91,6 +91,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
             intent.putExtra("release_date",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE)));
             intent.putExtra("title",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)));
             intent.putExtra("vote_average",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE)));
+            intent.putExtra("favorite",movies.getString(movies.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE)));
             this.context.startActivity(intent);
 
 //            v.getContext().startActivity(new Intent(v.getContext(), DetailActivity.class));

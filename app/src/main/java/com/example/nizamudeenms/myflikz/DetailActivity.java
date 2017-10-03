@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide;
 public class DetailActivity extends AppCompatActivity {
     private SQLiteDatabase mMovieDb;
     Cursor favoriteMovies;
-    String isFavorite;
+    String isFavorite = "N";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class DetailActivity extends AppCompatActivity {
         ImageView backDropImageView;
         TextView movieNameTextView;
         TextView overviewTextView, ratingTextView,releaseDateTextView;
-        FloatingActionButton favoriteFAB;
+        final FloatingActionButton favoriteFAB;
 
 
         posterImageView = (ImageView) findViewById(R.id.poster);
@@ -44,24 +44,42 @@ public class DetailActivity extends AppCompatActivity {
         releaseDateTextView = (TextView) findViewById(R.id.release_date);
         favoriteFAB = (FloatingActionButton) findViewById(R.id.favorite_fab);
 
-        favoriteMovies = getFavoriteMovies();
-        System.out.println("favoriteMovies"+favoriteMovies);
-        isFavorite =  favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE));
+
+        if (getIntent().getStringExtra("favorite") == "N") {
+            favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
+        }else{
+            favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
+        }
+
+        favoriteMovies = checkFavorite();
+
+        System.out.println("favoriteMovies.getCount() : "+favoriteMovies.getCount());
+        if (favoriteMovies.getCount() != 0) {
+            System.out.println("favoriteMovies Cursor : "+favoriteMovies);
+            isFavorite =  favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE));
+        }
+
         System.out.println("isFavorite  "+isFavorite);
 
-//        if (isFavorite.equals("Y")) {
-//            favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
-//        }else{
-//            favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
-//
-//        }
+
 
 
         favoriteFAB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "favorites clicked", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 0);
-                toast.show();
+
+                if (isFavorite.equals("N")) {
+
+                    System.out.println("CURRENT MOVIE ID : "+ getIntent().getStringExtra("id"));
+
+                    favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
+                    Toast toast = Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_LONG);
+                    toast.show();
+                }else{
+                    favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
+                    Toast toast = Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+
             }
         });
 
@@ -101,10 +119,11 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
-    private void checkFavorite() {
+    private Cursor checkFavorite() {
         MovieDbHelper movieDbHelper = new MovieDbHelper(this);
         mMovieDb = movieDbHelper.getReadableDatabase();
         Cursor cFavoriteMovies = getFavoriteMovies();
+        return cFavoriteMovies;
     }
 
     private Cursor getFavoriteMovies() {
