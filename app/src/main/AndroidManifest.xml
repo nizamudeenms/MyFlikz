@@ -23,7 +23,8 @@
         <activity
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nizamudeenms.myflikz.MainActivity" />
