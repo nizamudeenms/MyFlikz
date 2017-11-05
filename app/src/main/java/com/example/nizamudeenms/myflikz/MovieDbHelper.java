@@ -1,5 +1,6 @@
 package com.example.nizamudeenms.myflikz;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,7 +13,7 @@ import android.util.Log;
 public class MovieDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "movie.db";
     private static final int DATABASE_VERSION = 1;
-    final String SQL_CREATE_POPULAR_MOVIE_TABLE = "CREATE TABLE " + MovieContract.MovieEntry.POPULAR_MOVIE_TABLE + " (" +
+    final String SQL_CREATE_POPULAR_MOVIE_TABLE = "CREATE TABLE IF NOT EXISTS " + MovieContract.MovieEntry.POPULAR_MOVIE_TABLE + " (" +
             MovieContract.MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             MovieContract.MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
             MovieContract.MovieEntry.COLUMN_BACKDROP_URL + " INTEGER NOT NULL, " +
@@ -24,7 +25,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
             MovieContract.MovieEntry.COLUMN_FAVORITE + " CHAR NOT NULL DEFAULT 'N', " +
             " UNIQUE (" + MovieContract.MovieEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
 
-    final String SQL_CREATE_TOP_MOVIE_TABLE = "CREATE TABLE " + MovieContract.MovieEntry.TOP_MOVIE_TABLE + " (" +
+    final String SQL_CREATE_TOP_MOVIE_TABLE = "CREATE TABLE IF NOT EXISTS " + MovieContract.MovieEntry.TOP_MOVIE_TABLE + " (" +
             MovieContract.MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             MovieContract.MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
             MovieContract.MovieEntry.COLUMN_BACKDROP_URL + " INTEGER NOT NULL, " +
@@ -62,5 +63,23 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         Log.i("DB Dropped", "DB Dropped");
     }
 
+    public void updateFavorites(String movieId, String fav) {
+        String POP_TABLE_NAME = MovieContract.MovieEntry.POPULAR_MOVIE_TABLE;
+        String TOP_TABLE_NAME = MovieContract.MovieEntry.TOP_MOVIE_TABLE;
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        System.out.println(" fave from details activity in dbhelper : " + fav);
+        System.out.println(" movied id from dbhelper : " + movieId);
+        if (fav == "N" || fav.equals("N")) {
+            cv.put(MovieContract.MovieEntry.COLUMN_FAVORITE, "Y");
+        } else {
+            cv.put(MovieContract.MovieEntry.COLUMN_FAVORITE, "N");
+        }
+        int popCount = db.update(POP_TABLE_NAME, cv, " id = ?", new String[]{movieId});
+        int topCount = db.update(TOP_TABLE_NAME, cv, " id = ?", new String[]{movieId});
+        db.close();
+        System.out.println(" popCount is : " + popCount);
+        System.out.println(" topCount is : " + topCount);
+    }
 
 }

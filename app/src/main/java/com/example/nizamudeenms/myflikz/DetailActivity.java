@@ -23,6 +23,7 @@ public class DetailActivity extends AppCompatActivity {
     private SQLiteDatabase mMovieDb;
     Cursor favoriteMovies;
     String isFavorite = "N";
+    String currentMovieId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class DetailActivity extends AppCompatActivity {
         ImageView posterImageView;
         ImageView backDropImageView;
         TextView movieNameTextView;
-        TextView overviewTextView, ratingTextView,releaseDateTextView;
+        TextView overviewTextView, ratingTextView, releaseDateTextView;
         final FloatingActionButton favoriteFAB;
 
 
@@ -43,40 +44,45 @@ public class DetailActivity extends AppCompatActivity {
         ratingTextView = (TextView) findViewById(R.id.rating);
         releaseDateTextView = (TextView) findViewById(R.id.release_date);
         favoriteFAB = (FloatingActionButton) findViewById(R.id.favorite_fab);
+        currentMovieId = getIntent().getStringExtra("id");
+        System.out.println("CURRENT MOVIE ID : " + currentMovieId);
+        favoriteMovies = checkFavorite(getIntent().getStringExtra("id"));
+        System.out.println("favoriteMovies.getCount() : " + favoriteMovies.getCount());
 
 
-        if (getIntent().getStringExtra("favorite") == "N") {
+        if (favoriteMovies.moveToFirst()) {
+            System.out.println(favoriteMovies.getString(favoriteMovies.getColumnIndex("favorite")));
+            isFavorite = favoriteMovies.getString(favoriteMovies.getColumnIndex("favorite"));
+            System.out.println("isFavorite  " + isFavorite);
+        }
+        favoriteMovies.close();
+
+        if (isFavorite.equals("N")) {
             favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
-        }else{
+            System.out.println(" not favorite");
+        } else {
             favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
+            System.out.println(" its favorite ");
         }
 
-        favoriteMovies = checkFavorite();
 
-        System.out.println("favoriteMovies.getCount() : "+favoriteMovies.getCount());
-        if (favoriteMovies.getCount() != 0) {
-            System.out.println("favoriteMovies Cursor : "+favoriteMovies);
-            isFavorite =  favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE));
-        }
-
-        System.out.println("isFavorite  "+isFavorite);
-
-
+//        if (favoriteMovies.getCount() != 0) {
+//            System.out.println("favoriteMovies Cursor : "+favoriteMovies);
+//            isFavorite =  favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE));
+//        }
 
 
         favoriteFAB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 if (isFavorite.equals("N")) {
-
-                    System.out.println("CURRENT MOVIE ID : "+ getIntent().getStringExtra("id"));
-
-                    favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
-                    Toast toast = Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_LONG);
-                    toast.show();
-                }else{
+                    updateFavorites(currentMovieId, isFavorite);
                     favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
-                    Toast toast = Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    updateFavorites(currentMovieId, isFavorite);
+                    favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
+                    Toast toast = Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_SHORT);
                     toast.show();
                 }
 
@@ -88,7 +94,7 @@ public class DetailActivity extends AppCompatActivity {
 
 //        Log.i("Nizam",getIntent().getStringExtra("title"));
         String title = getIntent().getStringExtra("title");
-        String releaseDate = "Release Date : " +  getIntent().getStringExtra("release_date");
+        String releaseDate = "Release Date : " + getIntent().getStringExtra("release_date");
         String rating = "Rating : " + getIntent().getStringExtra("vote_average");
 
         movieNameTextView.setText(title);
@@ -96,41 +102,47 @@ public class DetailActivity extends AppCompatActivity {
         releaseDateTextView.setText(releaseDate);
         ratingTextView.setText(rating);
 
-        LinearLayout video_layout = (LinearLayout )findViewById(R.id.videos_layout);
+        LinearLayout video_layout = (LinearLayout) findViewById(R.id.videos_layout);
         video_layout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent videos_intent = new Intent(DetailActivity.this ,VideoActivity.class);
-                videos_intent.putExtra("id",getIntent().getStringExtra("id"));
+                Intent videos_intent = new Intent(DetailActivity.this, VideoActivity.class);
+                videos_intent.putExtra("id", getIntent().getStringExtra("id"));
                 startActivity(videos_intent);
             }
         });
 
-        LinearLayout review_layout = (LinearLayout )findViewById(R.id.review_layout_detail);
+        LinearLayout review_layout = (LinearLayout) findViewById(R.id.review_layout_detail);
         review_layout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent review_intent = new Intent(DetailActivity.this ,ReviewActivity.class);
-                review_intent.putExtra("id",getIntent().getStringExtra("id"));
+                Intent review_intent = new Intent(DetailActivity.this, ReviewActivity.class);
+                review_intent.putExtra("id", getIntent().getStringExtra("id"));
                 startActivity(review_intent);
             }
         });
     }
 
-    private Cursor checkFavorite() {
+    private Cursor checkFavorite(String movieId) {
         MovieDbHelper movieDbHelper = new MovieDbHelper(this);
         mMovieDb = movieDbHelper.getReadableDatabase();
-        Cursor cFavoriteMovies = getFavoriteMovies();
+        Cursor cFavoriteMovies = getFavoriteMovies(movieId);
         return cFavoriteMovies;
     }
 
-    private Cursor getFavoriteMovies() {
-        return mMovieDb.rawQuery("SELECT  * FROM POPULAR_MOVIES_TABLE POP WHERE  POP.FAVORITE = 'Y' " +
-                "UNION ALL " +
-                "SELECT  * FROM TOP_MOVIES_TABLE TOP WHERE  TOP.FAVORITE = 'Y' ", null);
+    private Cursor getFavoriteMovies(String movieId) {
+        return mMovieDb.rawQuery("SELECT  * FROM POPULAR_MOVIES_TABLE POP WHERE  POP.id = '" + movieId + "'"
+                + "UNION ALL " +
+                "SELECT  * FROM TOP_MOVIES_TABLE TOP WHERE  TOP.id = '" + movieId + "'", null);
     }
 
 
+    private boolean updateFavorites(String movieId, String fav) {
+        MovieDbHelper movieDbHelper = new MovieDbHelper(this);
+        movieDbHelper.updateFavorites(movieId, fav);
+        System.out.println(" updated");
+        return true;
+    }
 }
