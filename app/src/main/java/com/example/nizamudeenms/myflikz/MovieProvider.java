@@ -59,27 +59,19 @@ public class MovieProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case MOVIE_ID:
                 qb.appendWhere( MOVIE_ID + "=" + uri.getPathSegments().get(1));
-                System.out.println("inside select only one movie case");
                 break;
             case MOVIES:
                 qb.setProjectionMap(MOVIE_PROJECTION_MAP);
-                System.out.println("inside select all movies case");
                 break;
             default:
         }
 
         if (sortOrder == null || sortOrder == ""){
-            /**
-             * By default sort on student names
-             */
             sortOrder = MovieContract.MovieEntry.COLUMN_TITLE;
         }
 
         Cursor c = qb.query(db,	projection,	selection,
                 selectionArgs,null, null, sortOrder);
-        /**
-         * register to watch a content URI for changes
-         */
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
 
@@ -97,9 +89,6 @@ public class MovieProvider extends ContentProvider {
 
         long rowID = db.insert(MovieContract.MovieEntry.FAV_MOVIE_TABLE, "", values);
 
-        /**
-         * If record is added successfully
-         */
         if (rowID > 0) {
             Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
             getContext().getContentResolver().notifyChange(_uri, null);
@@ -113,18 +102,15 @@ public class MovieProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int count = 0;
-        System.out.println("uri is : "+uri);
         switch (uriMatcher.match(uri)){
             case MOVIES:
                 count = db.delete(MovieContract.MovieEntry.FAV_MOVIE_TABLE, selection, selectionArgs);
-                System.out.println("inside delete records in fav table count is: "+count);
                 break;
 
             case MOVIE_ID:
                 String id = uri.getPathSegments().get(1);
                 count = db.delete(MovieContract.MovieEntry.FAV_MOVIE_TABLE, MovieContract.MovieEntry.COLUMN_MOVIE_ID +  " = " + id +
                                 (!TextUtils.isEmpty(selection) ? "AND (" + selection + ')' : ""), selectionArgs);
-                System.out.println("inside delete only one record  in fav table count is : "+count);
 
                 break;
             default:

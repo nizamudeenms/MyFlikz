@@ -66,35 +66,27 @@ public class DetailActivity extends AppCompatActivity {
         releaseDate = "Release Date : " + getIntent().getStringExtra("release_date");
         rating = "Rating : " + getIntent().getStringExtra("vote_average");
 
-        System.out.println("movieid : " + movieId);
         favoriteMovies = checkFavorite(movieId);
-        System.out.println("favoriteMovies.getCount() : " + favoriteMovies.getCount());
 
         if (favoriteMovies.moveToFirst()) {
-            System.out.println(favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)));
             isFavorite = favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
-            System.out.println("isFavorite  " + isFavorite);
         }
         favoriteMovies.close();
 
         if (!isFavorite.equals(movieId)) {
             favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
-            System.out.println(" not favorite");
         } else {
             favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
-            System.out.println(" its favorite ");
         }
 
         favoriteFAB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isFavorite.equals("N")) {
-//                    updateFavorites(movieId, isFavorite);
                     addFavorites(movieId, backdropUrl, posterUrl, overview, title, releaseDate, rating);
                     favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
                     Toast toast = Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
-//                    updateFavorites(movieId, isFavorite);
                     removeFavorites(movieId);
                     favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
                     Toast toast = Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_SHORT);

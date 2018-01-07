@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -55,9 +54,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewHold
 
         @Override
         public void onClick(View v) {
-            Toast toast = new Toast(context);
-            toast.setText("Cliked");
-            toast.show();
         }
     }
 }

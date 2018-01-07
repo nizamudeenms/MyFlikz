@@ -1,6 +1,5 @@
 package com.example.nizamudeenms.myflikz;
 
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -39,9 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private static final String endpoint = "http://image.tmdb.org/t/p/";
     private ArrayList<Movie> movies;
-    private ProgressDialog pDialog;
     private MovieAdapter mAdapter;
-    private String urlFromJson = null;
     private RecyclerView recyclerView;
     private SQLiteDatabase mMovieDb;
 
@@ -65,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         MovieDbHelper movieDbHelper = new MovieDbHelper(this);
         mMovieDb = movieDbHelper.getWritableDatabase();
 
-        Log.i(TAG, "Adapter Set");
         FetchMoviesTask fetchMovies = new FetchMoviesTask();
         fetchMovies.execute();
 
@@ -116,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onResponse(JSONObject response) {
-//                            Log.d(TAG, response.toString());
                             movies.clear();
                             try {
                                 JSONArray responseBundle = response.getJSONArray("results");
@@ -124,10 +119,6 @@ public class MainActivity extends AppCompatActivity {
                                     JSONObject c = responseBundle.getJSONObject(j);
                                     String posterPath = c.getString("poster_path");
                                     String backdropPath = c.getString("backdrop_path");
-//                                Log.i(TAG, posterPath);
-                                    Log.i(TAG, c.getString("original_title"));
-                                    Log.i(TAG, c.getString("vote_average"));
-                                    Log.i(TAG, c.getString("release_date"));
 
                                     Movie movie = new Movie();
                                     movie.setPOSTER_PATH(endpoint + "w185/" + posterPath);
@@ -148,12 +139,7 @@ public class MainActivity extends AppCompatActivity {
                                     cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, c.getString("overview"));
                                     cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, c.getString("release_date"));
                                     cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, c.getString("vote_average"));
-//                                    MovieDbHelper movieDbHelper = new MovieDbHelper(getApplicationContext());
-//                                    mMovieDb = movieDbHelper.getWritableDatabase();
                                     mMovieDb.insert(MovieContract.MovieEntry.POPULAR_MOVIE_TABLE, null, cv);
-//                                    mMovieDb.close();
-                                    System.out.println("Value inserted in Popular DB ");
-
                                 }
 
                             } catch (JSONException e) {
@@ -208,10 +194,6 @@ public class MainActivity extends AppCompatActivity {
                                     JSONObject c = responseBundle.getJSONObject(j);
                                     String posterPath = c.getString("poster_path");
                                     String backdropPath = c.getString("backdrop_path");
-//                                Log.i(TAG, posterPath);
-                                    Log.i(TAG, c.getString("original_title"));
-                                    Log.i(TAG, c.getString("vote_average"));
-                                    Log.i(TAG, c.getString("release_date"));
 
                                     Movie movie = new Movie();
                                     movie.setPOSTER_PATH(endpoint + "w185/" + posterPath);
@@ -232,14 +214,11 @@ public class MainActivity extends AppCompatActivity {
                                     cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, c.getString("release_date"));
                                     cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, c.getString("vote_average"));
                                     mMovieDb.insert(MovieContract.MovieEntry.TOP_MOVIE_TABLE, null, cv);
-                                    System.out.println("Value inserted in Top DB ");
                                 }
 
                             } catch (JSONException e) {
                                 Log.e(TAG, "Json parsing error: " + e.getMessage());
                             }
-
-//                            mAdapter.notifyDataSetChanged();
                         }
                     }, new Response.ErrorListener() {
 
@@ -316,22 +295,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "INSIDE on resume ");
-
         Cursor cPopularMovies = getPopularMovies();
         Cursor cTopMovies = getTopMovies();
         Cursor cFavMovies = getFavMovies();
 
         if (sortBy.equals(GET_POPULAR)) {
-            System.out.println("inside popular movies");
             mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
             recyclerView.setAdapter(mAdapter);
         } else if (sortBy.equals(GET_TOP)) {
-            System.out.println("inside top movies");
             mAdapter = new MovieAdapter(getApplicationContext(), cTopMovies);
             recyclerView.setAdapter(mAdapter);
         } else if (sortBy.equals(GET_FAV)) {
-            System.out.println("inside Favorite movies");
             mAdapter = new MovieAdapter(getApplicationContext(), cFavMovies);
             recyclerView.setAdapter(mAdapter);
         }

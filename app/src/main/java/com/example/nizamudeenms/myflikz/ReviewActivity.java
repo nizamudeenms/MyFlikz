@@ -43,7 +43,6 @@ public class ReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review);
 
         MOVIE_ID = getIntent().getStringExtra("id");
-        System.out.println("MOvie"+MOVIE_ID);
 
         recyclerViewReview = (RecyclerView) findViewById(R.id.recycler_view_review);
         recyclerViewReview.setHasFixedSize(true);

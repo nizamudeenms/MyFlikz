@@ -56,8 +56,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        System.out.println("inside Oncrate of sqllite ");
-
         db.execSQL(SQL_CREATE_POPULAR_MOVIE_TABLE);
         Log.i("Table Created", "POPULAR_MOVIE_TABLE TableCreated");
 
@@ -66,7 +64,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         db.execSQL(SQL_CREATE_FAV_MOVIE_TABLE);
         Log.i("Table Created", "FAV_MOVIE TableCreated");
-
     }
 
     @Override

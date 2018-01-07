@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -44,9 +43,7 @@ public class VideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
-        Log.i("youtubeVideos", String.valueOf(youtubeVideos.size()));
         MOVIE_ID = getIntent().getStringExtra("id");
-        System.out.println("MOvie"+MOVIE_ID);
 
 
         recyclerviewVideo = (RecyclerView) findViewById(R.id.recycler_view_video);
@@ -55,10 +52,8 @@ public class VideoActivity extends AppCompatActivity {
         recyclerviewVideo.setLayoutManager(new LinearLayoutManager(this));
 
 
-        mVideoAdapter  = new VideoAdapter(youtubeVideos);
-        System.out.println("after video adapter ");
+        mVideoAdapter = new VideoAdapter(youtubeVideos);
         recyclerviewVideo.setAdapter(mVideoAdapter);
-        System.out.println("after adapter ");
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         VideoFetchTask videoFetchTask = new VideoFetchTask();
@@ -68,17 +63,15 @@ public class VideoActivity extends AppCompatActivity {
 
     public class VideoFetchTask extends AsyncTask<Void, Void, Void> {
 
-//        VideoAdapter mVideoAdapter = new VideoAdapter(getApplicationContext(), youtubeVideos);;
         Context mContext;
-        ArrayList<Video> videosList = new ArrayList<Video>() {};
+        ArrayList<Video> videosList = new ArrayList<Video>() {
+        };
         String FINAL_URL = "";
 
         @Override
         protected void onPreExecute() {
-//            super.onPreExecute();
             mLoadingIndicator.setVisibility(View.VISIBLE);
         }
-
 
 
         @Override
@@ -86,22 +79,13 @@ public class VideoActivity extends AppCompatActivity {
             final String VIDEO_BASE_URL = "https://api.themoviedb.org/3/movie/";
             final String FIRST_VIDEO_URL = "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/";
             final String SECOND_VIDEO_URL = "\" frameborder=\"0\" allowfullscreen></iframe>";
-
-            Log.i("VideoFetchtask","Inside Video Fetch Task **************");
-
-
             String url = VIDEO_BASE_URL + MOVIE_ID + "/videos?api_key=" + BuildConfig.TMDB_KEY;
-
-            Log.i("Url ", url);
-
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                     url, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Log.i("Response From TMDB",response.toString());
-
                             try {
                                 JSONArray responseBundle = response.getJSONArray("results");
                                 for (int j = 0; j < responseBundle.length(); j++) {
@@ -116,8 +100,7 @@ public class VideoActivity extends AppCompatActivity {
                                     video.setSize(videoResponse.getString("size"));
                                     video.setType(videoResponse.getString("type"));
                                     videosList.add(video);
-                                    FINAL_URL = FIRST_VIDEO_URL + videoResponse.getString("key")+SECOND_VIDEO_URL;
-                                    Log.i("Final Url : ", FINAL_URL);
+                                    FINAL_URL = FIRST_VIDEO_URL + videoResponse.getString("key") + SECOND_VIDEO_URL;
                                     youtubeVideos.add(new Video(FINAL_URL));
                                 }
 
