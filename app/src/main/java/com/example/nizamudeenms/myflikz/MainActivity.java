@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
         movies = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), getResources().getInteger(R.integer.grid_number_cols));
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
@@ -69,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "Adapter Set");
         FetchMoviesTask fetchMovies = new FetchMoviesTask();
         fetchMovies.execute();
-
-//        mMovieDb.close();
 
     }
 
@@ -99,11 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Cursor getFavMovies() {
-//        return mMovieDb.rawQuery("SELECT  * FROM POPULAR_MOVIES_TABLE POP WHERE  POP.favorite = 'Y' "
-//                + "UNION ALL " +
-//                "SELECT  * FROM TOP_MOVIES_TABLE TOP WHERE  TOP.favorite ='Y'", null);
-        return  getContentResolver().query(MovieProvider.CONTENT_URI,null,null,null,null);
-
+        return getContentResolver().query(MovieProvider.CONTENT_URI, null, null, null, null);
     }
 
 
@@ -112,20 +105,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             final String FORECAST_BASE_URL = "https://api.themoviedb.org/3/movie/";
-
-            String url = FORECAST_BASE_URL + GET_POPULAR + "?api_key=" + BuildConfig.TMDB_KEY;
-
-//        pDialog.setMessage("Downloading json...");
-//        pDialog.show();
-
-//            if (sortBy.equals(GET_POPULAR)) {
-//                url = FORECAST_BASE_URL + GET_POPULAR + "?api_key=" + BuildConfig.TMDB_KEY;
-//            } else if (sortBy.equals(GET_TOP)) {
-//                url = FORECAST_BASE_URL + GET_TOP + "?api_key=" + BuildConfig.TMDB_KEY;
-//            } else {
-//                url = FORECAST_BASE_URL + GET_POPULAR + "?api_key=" + BuildConfig.TMDB_KEY;
-//            }
-
 
             String popular_url = FORECAST_BASE_URL + GET_POPULAR + "?api_key=" + BuildConfig.TMDB_KEY;
             final String top_url = FORECAST_BASE_URL + GET_TOP + "?api_key=" + BuildConfig.TMDB_KEY;
@@ -252,10 +231,7 @@ public class MainActivity extends AppCompatActivity {
                                     cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, c.getString("overview"));
                                     cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, c.getString("release_date"));
                                     cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, c.getString("vote_average"));
-//                                            MovieDbHelper movieDbHelper = new MovieDbHelper(getApplicationContext());
-//                                            mMovieDb = movieDbHelper.getWritableDatabase();
                                     mMovieDb.insert(MovieContract.MovieEntry.TOP_MOVIE_TABLE, null, cv);
-//                                            mMovieDb.close();
                                     System.out.println("Value inserted in Top DB ");
                                 }
 
@@ -340,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG,"INSIDE on resume ");
+        Log.i(TAG, "INSIDE on resume ");
 
         Cursor cPopularMovies = getPopularMovies();
         Cursor cTopMovies = getTopMovies();
@@ -362,12 +338,4 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-//    @Override
-//    public void onClick(String weatherForDay) {
-//        Context context = this;
-//        Intent intent = new Intent(this,DetailActivity.class);
-//        Toast.makeText(context, " Activity Launched", Toast.LENGTH_SHORT).show();
-//        startActivity(intent);
-//    }
 }

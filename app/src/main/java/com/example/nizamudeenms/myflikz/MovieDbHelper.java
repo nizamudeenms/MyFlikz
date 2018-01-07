@@ -1,6 +1,5 @@
 package com.example.nizamudeenms.myflikz;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -77,24 +76,4 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         onCreate(db);
         Log.i("DB Dropped", "DB Dropped");
     }
-
-    public void updateFavorites(String movieId, String fav) {
-        String POP_TABLE_NAME = MovieContract.MovieEntry.POPULAR_MOVIE_TABLE;
-        String TOP_TABLE_NAME = MovieContract.MovieEntry.TOP_MOVIE_TABLE;
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        System.out.println(" fave from details activity in dbhelper : " + fav);
-        System.out.println(" movied id from dbhelper : " + movieId);
-        if (fav == "N" || fav.equals("N")) {
-            cv.put(MovieContract.MovieEntry.COLUMN_FAVORITE, "Y");
-        } else {
-            cv.put(MovieContract.MovieEntry.COLUMN_FAVORITE, "N");
-        }
-        int popCount = db.update(POP_TABLE_NAME, cv, " id = ?", new String[]{movieId});
-        int topCount = db.update(TOP_TABLE_NAME, cv, " id = ?", new String[]{movieId});
-        db.close();
-        System.out.println(" popCount is : " + popCount);
-        System.out.println(" topCount is : " + topCount);
-    }
-
 }

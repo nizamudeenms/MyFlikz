@@ -19,17 +19,5 @@
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_gravity="center"
-        android:visibility="invisible"
-        />
-
-
-
-    <!--fragment
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/youtube_playerviewfragment"
-        android:layout_below="@+id/youtube_playerview"
-        android:name="com.google.android.youtube.player.YouTubePlayerFragment"/>-->
-
-
+        android:visibility="invisible" />
 </FrameLayout>

@@ -10,9 +10,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +32,8 @@ public class DetailActivity extends AppCompatActivity {
     String backdropUrl = null;
     String title = null;
     String releaseDate = null;
-    String rating  = null;
+    String rating = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +43,7 @@ public class DetailActivity extends AppCompatActivity {
         ImageView backDropImageView;
         TextView movieNameTextView;
         TextView overviewTextView, ratingTextView, releaseDateTextView;
+        CardView videoCardView, reviewCardView;
         final FloatingActionButton favoriteFAB;
 
 
@@ -52,18 +54,19 @@ public class DetailActivity extends AppCompatActivity {
         ratingTextView = (TextView) findViewById(R.id.rating);
         releaseDateTextView = (TextView) findViewById(R.id.release_date);
         favoriteFAB = (FloatingActionButton) findViewById(R.id.favorite_fab);
+        videoCardView = findViewById(R.id.video_card_view);
+        reviewCardView = findViewById(R.id.review_card_view);
 
-//        System.out.println("favorite movie id is : "+ favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)));
 
-        final String movieId = getIntent().getStringExtra("id");
-        final String backdropUrl = getIntent().getStringExtra("backdrop_url");
-        final String posterUrl = getIntent().getStringExtra("poster_url");
-        final String overview = getIntent().getStringExtra("overview");
-        final String title = getIntent().getStringExtra("title");
-        final String releaseDate = "Release Date : " + getIntent().getStringExtra("release_date");
-        final String rating = "Rating : " + getIntent().getStringExtra("vote_average");
+        movieId = getIntent().getStringExtra("id");
+        backdropUrl = getIntent().getStringExtra("backdrop_url");
+        posterUrl = getIntent().getStringExtra("poster_url");
+        overview = getIntent().getStringExtra("overview");
+        title = getIntent().getStringExtra("title");
+        releaseDate = "Release Date : " + getIntent().getStringExtra("release_date");
+        rating = "Rating : " + getIntent().getStringExtra("vote_average");
 
-        System.out.println("movieid : "+movieId);
+        System.out.println("movieid : " + movieId);
         favoriteMovies = checkFavorite(movieId);
         System.out.println("favoriteMovies.getCount() : " + favoriteMovies.getCount());
 
@@ -82,18 +85,11 @@ public class DetailActivity extends AppCompatActivity {
             System.out.println(" its favorite ");
         }
 
-
-//        if (favoriteMovies.getCount() != 0) {
-//            System.out.println("favoriteMovies Cursor : "+favoriteMovies);
-//            isFavorite =  favoriteMovies.getString(favoriteMovies.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE));
-//        }
-
-
         favoriteFAB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isFavorite.equals("N")) {
 //                    updateFavorites(movieId, isFavorite);
-                    addFavorites(movieId,backdropUrl,posterUrl,overview,title,releaseDate,rating);
+                    addFavorites(movieId, backdropUrl, posterUrl, overview, title, releaseDate, rating);
                     favoriteFAB.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_black_24dp));
                     Toast toast = Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_SHORT);
                     toast.show();
@@ -111,17 +107,12 @@ public class DetailActivity extends AppCompatActivity {
         Glide.with(getApplicationContext()).load(posterUrl).placeholder(R.mipmap.ic_launcher).crossFade().thumbnail(0.5f).into(posterImageView);
         Glide.with(getApplicationContext()).load(backdropUrl).placeholder(R.mipmap.ic_launcher).crossFade().thumbnail(0.5f).into(backDropImageView);
 
-
-//        Log.i("Nizam",getIntent().getStringExtra("title"));
-
-
         movieNameTextView.setText(title);
         overviewTextView.setText(overview);
         releaseDateTextView.setText(releaseDate);
         ratingTextView.setText(rating);
 
-        LinearLayout video_layout = (LinearLayout) findViewById(R.id.videos_layout);
-        video_layout.setOnClickListener(new View.OnClickListener() {
+        videoCardView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -131,9 +122,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        LinearLayout review_layout = (LinearLayout) findViewById(R.id.review_layout_detail);
-        review_layout.setOnClickListener(new View.OnClickListener() {
-
+        reviewCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent review_intent = new Intent(DetailActivity.this, ReviewActivity.class);
@@ -151,18 +140,11 @@ public class DetailActivity extends AppCompatActivity {
 
     private Cursor checkFavorite(String movieId) {
 
-        Cursor cFavoriteMovies = getContentResolver().query( ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, 2),null, MovieContract.MovieEntry.COLUMN_MOVIE_ID +"=" +movieId,null,null);
+        Cursor cFavoriteMovies = getContentResolver().query(ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, 2), null, MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=" + movieId, null, null);
         return cFavoriteMovies;
     }
 
-//    private boolean updateFavorites(String movieId, String fav) {
-//        MovieDbHelper movieDbHelper = new MovieDbHelper(this);
-//        movieDbHelper.updateFavorites(movieId, fav);
-//        System.out.println(" updated");
-//        return true;
-//    }
-
-    private void addFavorites(String movieId, String backdropUrl, String posterUrl, String overview, String title, String releaseDate, String rating){
+    private void addFavorites(String movieId, String backdropUrl, String posterUrl, String overview, String title, String releaseDate, String rating) {
         ContentValues values = new ContentValues();
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movieId);
         values.put(MovieContract.MovieEntry.COLUMN_POSTER_URL, posterUrl);
@@ -176,7 +158,5 @@ public class DetailActivity extends AppCompatActivity {
         Uri uri = getContentResolver().insert(
                 MovieProvider.CONTENT_URI, values);
 
-        Toast.makeText(getBaseContext(),
-                uri.toString(), Toast.LENGTH_LONG).show();
     }
 }
