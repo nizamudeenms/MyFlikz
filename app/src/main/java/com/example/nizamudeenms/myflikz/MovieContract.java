@@ -20,6 +20,7 @@ public class MovieContract {
 
         public static final String POPULAR_MOVIE_TABLE = "popular_movies_table";
         public static final String TOP_MOVIE_TABLE = "top_movies_table";
+        public static final String FAV_MOVIE_TABLE = "fav_movies_table";
         public static final String COLUMN_MOVIE_ID = "id";
         public static final String COLUMN_POSTER_URL = "poster_url";
         public static final String COLUMN_BACKDROP_URL = "backdrop_url";

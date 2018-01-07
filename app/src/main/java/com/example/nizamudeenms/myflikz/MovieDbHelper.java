@@ -38,6 +38,18 @@ public class MovieDbHelper extends SQLiteOpenHelper {
             " UNIQUE (" + MovieContract.MovieEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
 
 
+    final String SQL_CREATE_FAV_MOVIE_TABLE = "CREATE TABLE IF NOT EXISTS " + MovieContract.MovieEntry.FAV_MOVIE_TABLE + " (" +
+            MovieContract.MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+            MovieContract.MovieEntry.COLUMN_BACKDROP_URL + " INTEGER NOT NULL, " +
+            MovieContract.MovieEntry.COLUMN_OVERVIEW + " INTEGER NOT NULL, " +
+            MovieContract.MovieEntry.COLUMN_POSTER_URL + " INTEGER NOT NULL, " +
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " INTEGER NOT NULL, " +
+            MovieContract.MovieEntry.COLUMN_TITLE + " INTEGER NOT NULL, " +
+            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " INTEGER NOT NULL, " +
+            MovieContract.MovieEntry.COLUMN_FAVORITE + " CHAR NOT NULL DEFAULT 'N', " +
+            " UNIQUE (" + MovieContract.MovieEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
+
     public MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         Log.i("Database Created", "DB Created");
@@ -52,6 +64,9 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         db.execSQL(SQL_CREATE_TOP_MOVIE_TABLE);
         Log.i("Table Created", "TOP_MOVIE TableCreated");
+
+        db.execSQL(SQL_CREATE_FAV_MOVIE_TABLE);
+        Log.i("Table Created", "FAV_MOVIE TableCreated");
 
     }
 

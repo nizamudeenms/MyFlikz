@@ -66,25 +66,6 @@ public class MainActivity extends AppCompatActivity {
         MovieDbHelper movieDbHelper = new MovieDbHelper(this);
         mMovieDb = movieDbHelper.getWritableDatabase();
 
-//        Cursor cPopularMovies = getPopularMovies();
-//        Cursor cTopMovies = getTopMovies();
-//        Cursor cFavMovies = getFavMovies();
-
-//        if (sortBy.equals(GET_POPULAR)) {
-//            System.out.println("inside popular movies");
-//            mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
-//            recyclerView.setAdapter(mAdapter);
-//        } else if (sortBy.equals(GET_TOP)) {
-//            System.out.println("inside top movies");
-//            mAdapter = new MovieAdapter(getApplicationContext(), cTopMovies);
-//            recyclerView.setAdapter(mAdapter);
-//        } else if (sortBy.equals(GET_FAV)) {
-//            System.out.println("inside Favorite movies");
-//            mAdapter = new MovieAdapter(getApplicationContext(), cFavMovies);
-//            recyclerView.setAdapter(mAdapter);
-//        }
-
-
         Log.i(TAG, "Adapter Set");
         FetchMoviesTask fetchMovies = new FetchMoviesTask();
         fetchMovies.execute();
@@ -118,9 +99,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Cursor getFavMovies() {
-        return mMovieDb.rawQuery("SELECT  * FROM POPULAR_MOVIES_TABLE POP WHERE  POP.favorite = 'Y' "
-                + "UNION ALL " +
-                "SELECT  * FROM TOP_MOVIES_TABLE TOP WHERE  TOP.favorite ='Y'", null);
+//        return mMovieDb.rawQuery("SELECT  * FROM POPULAR_MOVIES_TABLE POP WHERE  POP.favorite = 'Y' "
+//                + "UNION ALL " +
+//                "SELECT  * FROM TOP_MOVIES_TABLE TOP WHERE  TOP.favorite ='Y'", null);
+        return  getContentResolver().query(MovieProvider.CONTENT_URI,null,null,null,null);
+
     }
 
 
@@ -280,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e(TAG, "Json parsing error: " + e.getMessage());
                             }
 
-                            mAdapter.notifyDataSetChanged();
+//                            mAdapter.notifyDataSetChanged();
                         }
                     }, new Response.ErrorListener() {
 
@@ -354,6 +337,31 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG,"INSIDE on resume ");
+
+        Cursor cPopularMovies = getPopularMovies();
+        Cursor cTopMovies = getTopMovies();
+        Cursor cFavMovies = getFavMovies();
+
+        if (sortBy.equals(GET_POPULAR)) {
+            System.out.println("inside popular movies");
+            mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
+            recyclerView.setAdapter(mAdapter);
+        } else if (sortBy.equals(GET_TOP)) {
+            System.out.println("inside top movies");
+            mAdapter = new MovieAdapter(getApplicationContext(), cTopMovies);
+            recyclerView.setAdapter(mAdapter);
+        } else if (sortBy.equals(GET_FAV)) {
+            System.out.println("inside Favorite movies");
+            mAdapter = new MovieAdapter(getApplicationContext(), cFavMovies);
+            recyclerView.setAdapter(mAdapter);
+        }
+
+
+    }
 
 //    @Override
 //    public void onClick(String weatherForDay) {

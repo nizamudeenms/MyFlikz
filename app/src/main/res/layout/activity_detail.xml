@@ -39,6 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/back_drop">
 
+
                     <ImageView
                         android:id="@+id/poster"
                         android:layout_width="wrap_content"
@@ -112,86 +113,105 @@
                         android:shadowRadius="2"
                         android:textColor="@color/light_font" />
 
-                    <View
+                    <!--<View-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="1dp"-->
+                    <!--android:background="@color/color_black" />-->
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/color_black" />
-
-                    <LinearLayout
-                        android:id="@+id/videos_layout"
-                        style="@style/ActivityLabelStyle"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:layout_margin="5dp"
-                        android:padding="5dp">
+                        android:backgroundTint="@color/colorPrimary"
+                        card_view:cardCornerRadius="5dp"
+                        card_view:cardElevation="5dp">
 
-                        <ImageView
-                            android:id="@+id/video_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/rating"
-                            android:layout_marginLeft="10dp"
-                            android:padding="5dp"
-                            android:shadowDx="1"
-                            android:shadowDy="1"
-                            android:shadowRadius="2"
-                            android:src="@drawable/ic_video_library_black_24px"
-                            android:tint="@color/light_font" />
-
-                        <TextView
-                            android:id="@+id/video_label"
+                        <LinearLayout
+                            android:id="@+id/videos_layout"
+                            style="@style/ActivityLabelStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
-                            android:padding="5dp"
-                            android:shadowColor="@color/text_shadow"
-                            android:shadowDx="1"
-                            android:shadowDy="1"
-                            android:shadowRadius="1"
-                            android:text="@string/video_label"
-                            android:textColor="@color/light_font" />
-                    </LinearLayout>
+                            android:padding="5dp">
 
-                    <View
+                            <ImageView
+                                android:id="@+id/video_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/rating"
+                                android:layout_marginLeft="10dp"
+                                android:padding="5dp"
+                                android:shadowDx="1"
+                                android:shadowDy="1"
+                                android:shadowRadius="2"
+                                android:src="@drawable/ic_video_library_black_24px"
+                                android:tint="@color/light_font" />
+
+                            <TextView
+                                android:id="@+id/video_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:padding="5dp"
+                                android:shadowColor="@color/text_shadow"
+                                android:shadowDx="1"
+                                android:shadowDy="1"
+                                android:shadowRadius="1"
+                                android:text="@string/video_label"
+                                android:textColor="@color/light_font" />
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/color_black" />
-
-                    <LinearLayout
-                        android:id="@+id/review_layout_detail"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/videos_layout"
+                        android:layout_gravity="center"
                         android:layout_margin="5dp"
-                        android:padding="5dp">
+                        android:backgroundTint="@color/colorPrimary"
+                        card_view:cardCornerRadius="5dp"
+                        card_view:cardElevation="5dp">
+                        <!--<View-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="1dp"-->
+                        <!--android:background="@color/color_black" />-->
 
-
-                        <ImageView
-                            android:id="@+id/review_icon"
+                        <LinearLayout
+                            android:id="@+id/review_layout_detail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:padding="5dp"
-
-                            android:src="@drawable/ic_rate_review_black_24px"
-                            android:tint="@color/light_font" />
-
-                        <TextView
-                            android:id="@+id/review_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/videos_layout"
                             android:layout_margin="5dp"
-                            android:padding="5dp"
+                            android:padding="5dp">
 
-                            android:shadowColor="@color/text_shadow"
-                            android:text="@string/review_label"
-                            android:textColor="@color/light_font" />
-                    </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/color_black" />
+                            <ImageView
+                                android:id="@+id/review_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:padding="5dp"
+
+                                android:src="@drawable/ic_rate_review_black_24px"
+                                android:tint="@color/light_font" />
+
+                            <TextView
+                                android:id="@+id/review_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:padding="5dp"
+
+                                android:shadowColor="@color/text_shadow"
+                                android:text="@string/review_label"
+                                android:textColor="@color/light_font" />
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <!--<View-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="1dp"-->
+                    <!--android:background="@color/color_black" />-->
 
                 </LinearLayout>
 
