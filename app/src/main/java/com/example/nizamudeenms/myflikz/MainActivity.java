@@ -67,9 +67,8 @@ public class MainActivity extends AppCompatActivity {
         MovieDbHelper movieDbHelper = new MovieDbHelper(this);
         mMovieDb = movieDbHelper.getWritableDatabase();
 
-
         if (savedInstanceState != null) {
-            sortBy = savedInstanceState.getString(sortBy);
+            sortBy = savedInstanceState.getString("loadList");
             listState = savedInstanceState.getParcelable("ListState");
             recyclerView.getLayoutManager().onRestoreInstanceState(listState);
         } else {
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(sortBy, GET_POPULAR);
+        outState.putString("loadList", sortBy);
         outState.putParcelable("ListState", recyclerView.getLayoutManager().onSaveInstanceState());
 
     }
