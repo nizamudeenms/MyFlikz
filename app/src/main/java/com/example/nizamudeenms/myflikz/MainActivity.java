@@ -281,7 +281,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuSelected = item.getItemId();
-        System.out.println("menuselected " + menuSelected);
 
         if (menuSelected == R.id.popular) {
             sortBy = GET_POPULAR;
@@ -315,26 +314,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        int menuSelected = menu.findItem(R.id.popular).getItemId();
-        System.out.println("menuselected " + menuSelected);
-        if (menuSelected == R.id.popular) {
-            sortBy = GET_POPULAR;
-        } else if (menuSelected == R.id.topRated) {
-            sortBy = GET_TOP;
-        } else if (menuSelected == R.id.favorite) {
-            sortBy = GET_FAV;
-        }
-        return true;
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         Cursor cPopularMovies = getPopularMovies();
         Cursor cTopMovies = getTopMovies();
         Cursor cFavMovies = getFavMovies();
-        System.out.println("sort by in onResume : " + sortBy);
 
         if (sortBy.equals(GET_POPULAR)) {
             mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
