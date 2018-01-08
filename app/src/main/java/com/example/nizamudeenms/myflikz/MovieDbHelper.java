@@ -51,7 +51,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     public MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        Log.i("Database Created", "DB Created");
     }
 
     @Override

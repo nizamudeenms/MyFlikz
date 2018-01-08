@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -46,11 +47,14 @@ public class MainActivity extends AppCompatActivity {
     final String GET_TOP = "top_rated";
     final String GET_FAV = "favorite";
     public String sortBy = GET_POPULAR;
+    private Parcelable listState;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         movies = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -59,13 +63,31 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 
+
         MovieDbHelper movieDbHelper = new MovieDbHelper(this);
         mMovieDb = movieDbHelper.getWritableDatabase();
 
-        FetchMoviesTask fetchMovies = new FetchMoviesTask();
-        fetchMovies.execute();
+
+        if (savedInstanceState != null) {
+            sortBy = savedInstanceState.getString(sortBy);
+            listState = savedInstanceState.getParcelable("ListState");
+            recyclerView.getLayoutManager().onRestoreInstanceState(listState);
+        } else {
+            FetchMoviesTask fetchMovies = new FetchMoviesTask();
+            fetchMovies.execute();
+        }
+
 
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(sortBy, GET_POPULAR);
+        outState.putParcelable("ListState", recyclerView.getLayoutManager().onSaveInstanceState());
+
+    }
+
 
     private Cursor getPopularMovies() {
         return mMovieDb.query(
@@ -260,6 +282,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuSelected = item.getItemId();
+        System.out.println("menuselected " + menuSelected);
 
         if (menuSelected == R.id.popular) {
             sortBy = GET_POPULAR;
@@ -293,11 +316,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        int menuSelected = menu.findItem(R.id.popular).getItemId();
+        System.out.println("menuselected " + menuSelected);
+        if (menuSelected == R.id.popular) {
+            sortBy = GET_POPULAR;
+        } else if (menuSelected == R.id.topRated) {
+            sortBy = GET_TOP;
+        } else if (menuSelected == R.id.favorite) {
+            sortBy = GET_FAV;
+        }
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Cursor cPopularMovies = getPopularMovies();
         Cursor cTopMovies = getTopMovies();
         Cursor cFavMovies = getFavMovies();
+        System.out.println("sort by in onResume : " + sortBy);
 
         if (sortBy.equals(GET_POPULAR)) {
             mAdapter = new MovieAdapter(getApplicationContext(), cPopularMovies);
